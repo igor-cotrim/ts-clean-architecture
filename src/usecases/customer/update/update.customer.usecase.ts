@@ -3,11 +3,11 @@ import CustomerFactory from "../../../domain/customer/factories/customer.factory
 import Address from "../../../domain/customer/value_objects/address";
 import Customer from "../../../domain/customer/entities/customer";
 import {
-  InputCreateCustomerDto,
-  OutputCreateCustomerDto,
-} from "./create.customer.dto";
+  InputUpdateCustomerDto,
+  OutputUpdateCustomerDto,
+} from "./update.customer.dto";
 
-export default class CreateCustomerUseCase {
+export default class UpdateCustomerUseCase {
   private customerRepository: CustomerRepositoryInterface;
 
   constructor(customerRepository: CustomerRepositoryInterface) {
@@ -15,10 +15,12 @@ export default class CreateCustomerUseCase {
   }
 
   async execute(
-    input: InputCreateCustomerDto
-  ): Promise<OutputCreateCustomerDto> {
-    const customer = CustomerFactory.createWithAddress(
-      input.name,
+    input: InputUpdateCustomerDto
+  ): Promise<OutputUpdateCustomerDto> {
+    const customer = await this.customerRepository.find(input.id);
+
+    customer.changeName(input.name);
+    customer.changeAddress(
       new Address(
         input.address.street,
         input.address.number,
@@ -27,7 +29,7 @@ export default class CreateCustomerUseCase {
       )
     );
 
-    await this.customerRepository.create(customer as Customer);
+    await this.customerRepository.update(customer);
 
     return {
       id: customer.id,
