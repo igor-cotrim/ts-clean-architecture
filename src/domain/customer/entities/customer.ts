@@ -1,22 +1,24 @@
+import Entity from "../../@shared/entities/entity.abstract";
+import NotificationError from "../../@shared/notifications/notification.error";
 import Address from "../value_objects/address";
 import ICustomer from "./customer.interface";
 
-export default class Customer implements ICustomer {
-  private _id: string;
+export default class Customer extends Entity implements ICustomer {
   private _name: string = "";
   private _address!: Address;
   private _active: boolean = false;
   private _rewardPoints: number = 0;
 
   constructor(id: string, name: string) {
+    super();
+
     this._id = id;
     this._name = name;
-
     this.validate();
-  }
 
-  get id(): string {
-    return this._id;
+    if (this.notification.hasErrors()) {
+      throw new NotificationError(this.notification.getErrors());
+    }
   }
 
   get name(): string {
@@ -37,10 +39,16 @@ export default class Customer implements ICustomer {
 
   validate() {
     if (!this._id) {
-      throw new Error("id is required");
+      this.notification.addError({
+        context: "customer",
+        message: "id is required",
+      });
     }
     if (!this._name) {
-      throw new Error("name is required");
+      this.notification.addError({
+        context: "customer",
+        message: "name is required",
+      });
     }
   }
 

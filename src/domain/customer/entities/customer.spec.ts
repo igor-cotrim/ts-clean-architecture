@@ -5,13 +5,21 @@ describe("#CustomerEntity", () => {
   it("should throw error when id is empty", () => {
     expect(() => {
       new Customer("", "Igor Cotrim");
-    }).toThrowError(new Error("id is required"));
+    }).toThrowError(new Error("customer: id is required"));
   });
 
   it("should throw error when name is empty", () => {
     expect(() => {
       let customer = new Customer("123", "");
-    }).toThrowError(new Error("name is required"));
+    }).toThrowError(new Error("customer: name is required"));
+  });
+
+  it("should throw error when name and id is empty", () => {
+    expect(() => {
+      let customer = new Customer("", "");
+    }).toThrowError(
+      new Error("customer: id is required, customer: name is required")
+    );
   });
 
   it("should change name", () => {
